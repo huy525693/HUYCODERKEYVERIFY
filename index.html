@@ -145,7 +145,7 @@
 
   .key-text:active {
     transform: scale(0.97);
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.2);
     text-shadow: 0 0 8px rgba(255,255,255,0.6);
     transition: transform 0.08s linear, background 0.1s ease;
   }
@@ -218,7 +218,7 @@
     margin-bottom: 0.75rem;
     color: #ffffff;
     letter-spacing: -0.5px;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
   }
 
   .modal-message {
@@ -228,7 +228,7 @@
     margin: 1rem 0 1.8rem;
     line-height: 1.5;
     white-space: pre-line;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
   }
 
   .text-fade-out {
@@ -296,11 +296,11 @@
     line-height: 1;
   }
   .rotate-animation {
-    animation: smoothSpin 0.55s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+    animation: smoothSpin 0.6s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
   }
   @keyframes smoothSpin {
-    0% { transform: rotate(0deg) scale(0.9); opacity: 0.5; }
-    50% { transform: rotate(180deg) scale(1.05); }
+    0% { transform: rotate(0deg) scale(0.8); opacity: 0.4; }
+    40% { transform: rotate(180deg) scale(1.1); }
     100% { transform: rotate(360deg) scale(1); opacity: 1; }
   }
 
@@ -343,15 +343,16 @@
     justify-content: center;
     align-items: center;
   }
+  
   .icon-wrapper {
-    transition: opacity 0.35s cubic-bezier(0.2, 0.9, 0.6, 1.1), transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+    transition: opacity 0.25s cubic-bezier(0.2, 0.9, 0.6, 1.1), transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
   }
   .icon-wrapper.fade-out {
     opacity: 0;
     transform: scale(0.7) rotate(-10deg);
   }
   .icon-wrapper.fade-in {
-    animation: floatFadeIn 0.45s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
+    animation: floatFadeIn 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
   }
   @keyframes floatFadeIn {
     0% {
@@ -359,7 +360,7 @@
       transform: scale(0.65) translateY(15px);
     }
     60% {
-      transform: scale(1.03) translateY(-2px);
+      transform: scale(1.02) translateY(-2px);
     }
     100% {
       opacity: 1;
@@ -515,6 +516,7 @@
   let audio = null;
   let isPlaying = false;
   let verifyTimeoutId = null;
+  let isTransitioning = false;
 
   function smoothTextUpdate(titleText, messageText, isError = false) {
     modalTextGroup.classList.add('text-fade-out');
@@ -532,7 +534,7 @@
       modalTextGroup.classList.add('text-fade-in');
       setTimeout(() => {
         modalTextGroup.classList.remove('text-fade-in');
-      }, 280);
+      }, 300);
     }, 200);
   }
 
@@ -541,12 +543,14 @@
     if (currentWrapper) {
       currentWrapper.classList.add('fade-out');
       setTimeout(() => {
-        verifyIconArea.innerHTML = '';
-        const newWrapper = document.createElement('div');
-        newWrapper.className = 'icon-wrapper fade-in';
-        newWrapper.innerHTML = htmlContent;
-        verifyIconArea.appendChild(newWrapper);
-      }, 320);
+        if (verifyIconArea) {
+          verifyIconArea.innerHTML = '';
+          const newWrapper = document.createElement('div');
+          newWrapper.className = 'icon-wrapper fade-in';
+          newWrapper.innerHTML = htmlContent;
+          verifyIconArea.appendChild(newWrapper);
+        }
+      }, 220);
     } else {
       verifyIconArea.innerHTML = '';
       const newWrapper = document.createElement('div');
@@ -556,7 +560,9 @@
     }
   }
 
-  function transitionToResult(success) {
+  async function transitionToResult(success) {
+    if (isTransitioning) return;
+    isTransitioning = true;
     if (success) {
       const successHtml = `
         <div class="circle-icon success-circle rotate-animation">
@@ -567,7 +573,9 @@
       smoothTextUpdate('XÁC THỰC THÀNH CÔNG', 'Đã Xác Thực Key', false);
       verifyCloseBtn.style.display = 'none';
       
-      setTimeout(() => {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      if (verifyModal.classList.contains('active')) {
         verifyModalContainer.classList.add('modal-fade-out-down');
         const onFadeOutEnd = () => {
           verifyModalContainer.removeEventListener('animationend', onFadeOutEnd);
@@ -576,7 +584,8 @@
           requestAnimationFrame(() => {
             setTimeout(() => {
               musicModal.classList.add('active');
-            }, 50);
+              isTransitioning = false;
+            }, 40);
           });
         };
         verifyModalContainer.addEventListener('animationend', onFadeOutEnd, { once: true });
@@ -585,9 +594,12 @@
             verifyModal.classList.remove('active');
             verifyModalContainer.classList.remove('modal-fade-out-down');
             musicModal.classList.add('active');
+            isTransitioning = false;
           }
         }, 600);
-      }, 3000);
+      } else {
+        isTransitioning = false;
+      }
     } else {
       const errorHtml = `
         <div class="circle-icon error-circle rotate-animation">
@@ -597,6 +609,7 @@
       setIconWithSmooth(errorHtml);
       smoothTextUpdate('XÁC THỰC THẤT BẠI', 'Không Tìm Thấy Key', true);
       verifyCloseBtn.style.display = 'none';
+      isTransitioning = false;
     }
   }
 
@@ -631,7 +644,7 @@
   verifyModal.addEventListener('click', (e) => {
     if (e.target === verifyModal) {
       const hasSpinner = verifyIconArea.querySelector('.spinner');
-      if (!hasSpinner && verifyTimeoutId === null) {
+      if (!hasSpinner && verifyTimeoutId === null && !isTransitioning) {
         verifyModal.classList.remove('active');
       }
     }
