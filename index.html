@@ -134,6 +134,19 @@
     word-break: break-word;
     white-space: normal;
     letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0.2rem 0;
+    border-radius: 12px;
+  }
+
+  .key-text:hover {
+    background: rgba(255, 255, 255, 0.1);
+    text-shadow: 0 0 5px rgba(255,255,255,0.5);
+  }
+
+  .key-text:active {
+    transform: scale(0.98);
   }
 
   .btn {
@@ -349,10 +362,6 @@
       font-size: 1rem;
       text-align: center;
     }
-    .btn {
-      width: 100%;
-      justify-content: center;
-    }
     .title {
       font-size: 1.7rem;
       text-align: center;
@@ -389,15 +398,14 @@
            onerror="this.style.display='none'; this.parentNode.innerText='HC'; this.parentNode.style.fontSize='3rem'; this.parentNode.style.fontWeight='800'; this.parentNode.style.color='#ffffff'; this.parentNode.style.background='#171c24'; this.parentNode.style.border='1px solid rgba(255,255,255,0.6)';">
     </div>
     <div class="body">
-      <h2 class="title">HUYCODER VERIFY</h2>
+      <h2 class="title">HuyCoder VERIFY</h2>
       <p class="subtitle">HỆ THỐNG XÁC THỰC &amp; LẤY KEY TỰ ĐỘNG</p>
 
       <div class="key-box">
         <div class="key-text" id="keyText">Đang kiểm tra liên kết...</div>
-        <button class="btn" id="copyBtn">COPY KEY</button>
       </div>
 
-      <div class="small">HUYCODER X TOOL CHÍNH HÃNG © 2026 — HỆ THỐNG BẢO MẬT</div>
+      <div class="small">HuyCoder CHÍNH HÃNG © 2026 — HỆ THỐNG BẢO MẬT</div>
     </div>
   </div>
 </div>
@@ -457,7 +465,6 @@
   const copyResultTitle = document.getElementById('copyResultTitle');
   const copyResultMsg = document.getElementById('copyResultMsg');
   const closeCopyModalBtn = document.getElementById('closeCopyModalBtn');
-  const copyButton = document.getElementById('copyBtn');
 
   let audio = null;
   let isPlaying = false;
@@ -470,8 +477,10 @@
     verifyCloseBtn.style.display = 'none';
     verifyModalContainer.classList.remove('modal-fade-out-down');
     
+    // Spinner quay 3.5 giây, sau đó mới hiển thị kết quả
     setTimeout(() => {
       if (isValidKey) {
+        // Hiển thị thành công (tích xanh)
         verifyIconArea.innerHTML = `
           <div class="circle-icon success-circle rotate-animation">
             <div class="success-check">✔</div>
@@ -481,6 +490,7 @@
         verifyMessage.innerText = 'Đã Xác Thực Key';
         verifyCloseBtn.style.display = 'none';
         
+        // Sau 3 giây, bắt đầu hiệu ứng fade-out và mở modal nhạc
         setTimeout(() => {
           verifyModalContainer.classList.add('modal-fade-out-down');
           
@@ -498,6 +508,7 @@
           verifyModalContainer.addEventListener('animationend', onFadeOutEnd, { once: true });
         }, 3000);
       } else {
+        // Hiển thị thất bại, không có nút đóng, không thể thoát modal
         verifyIconArea.innerHTML = `
           <div class="circle-icon error-circle rotate-animation">
             <div class="error-x">X</div>
@@ -506,8 +517,9 @@
         verifyTitle.innerText = 'XÁC THỰC THẤT BẠI';
         verifyMessage.innerText = 'Không Tìm Thấy Key';
         verifyCloseBtn.style.display = 'none';
+        // Không có nút đóng → modal sẽ giữ nguyên mãi mãi
       }
-    }, 300);
+    }, 3500); // 3.5 giây spinner
   }
 
   verifyModal.addEventListener('click', (e) => {
@@ -572,7 +584,8 @@
     if (e.target === copyResultModal) closeCopyModal();
   });
 
-  async function copyKeyAction() {
+  // Sự kiện click vào ô key để copy
+  async function copyKeyFromElement() {
     if (!isValidKey) {
       showCopyModal(false, 'Không tìm thấy key hợp lệ trong URL.');
       return;
@@ -581,20 +594,18 @@
     try {
       await navigator.clipboard.writeText(realKey);
       showCopyModal(true, `Đã sao chép key thành công:\n${realKey}`);
-      const originalText = copyButton.innerText;
-      copyButton.innerText = "✓ COPIED";
-      copyButton.style.opacity = "0.9";
+      // Hiệu ứng nháy nhẹ trên ô key
+      keyDisplay.style.transform = 'scale(0.99)';
       setTimeout(() => {
-        copyButton.innerText = originalText;
-        copyButton.style.opacity = "";
-      }, 1300);
+        keyDisplay.style.transform = '';
+      }, 200);
     } catch (err) {
       showCopyModal(false, 'Lỗi sao chép: Trình duyệt không cho phép hoặc có lỗi kỹ thuật.');
     }
   }
 
-  if (copyButton) {
-    copyButton.addEventListener('click', copyKeyAction);
+  if (keyDisplay) {
+    keyDisplay.addEventListener('click', copyKeyFromElement);
   }
 
   startVerification();
