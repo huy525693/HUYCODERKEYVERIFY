@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-<title>HUYCODER — Get Key & Verify Key | White LED</title>
+<title>HUYCODER — Get Key & Verify Key | White LED | Ultra Smooth</title>
 <style>
   * {
     margin: 0;
@@ -23,6 +23,7 @@
     --copy-btn: #252a33;
     --copy-btn-hover: #353d48;
     --transition-default: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   body {
@@ -135,18 +136,23 @@
     white-space: normal;
     letter-spacing: 0.3px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     padding: 0.2rem 0;
     border-radius: 12px;
-  }
-
-  .key-text:hover {
-    background: rgba(255, 255, 255, 0.1);
-    text-shadow: 0 0 5px rgba(255,255,255,0.5);
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .key-text:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
+    background: rgba(255, 255, 255, 0.15);
+    text-shadow: 0 0 8px rgba(255,255,255,0.6);
+    transition: transform 0.08s linear, background 0.1s ease;
+  }
+
+  .key-text:hover {
+    background: rgba(255, 255, 255, 0.08);
+    text-shadow: 0 0 5px rgba(255,255,255,0.3);
   }
 
   .error-key {
@@ -170,14 +176,14 @@
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 2000;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.35s, visibility 0.35s;
+    transition: opacity 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1), visibility 0.4s;
   }
 
   .modal-overlay.active {
@@ -193,12 +199,17 @@
     width: 90%;
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.6);
-    transform: scale(0.92) translateY(10px);
-    transition: transform 0.35s;
+    transform: scale(0.92) translateY(15px);
+    transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+    box-shadow: 0 25px 40px rgba(0,0,0,0.5);
   }
 
   .modal-overlay.active .modal-container {
     transform: scale(1) translateY(0);
+  }
+
+  .modal-text-group {
+    transition: all 0.3s ease-out;
   }
 
   .modal-title {
@@ -207,6 +218,7 @@
     margin-bottom: 0.75rem;
     color: #ffffff;
     letter-spacing: -0.5px;
+    transition: opacity 0.25s ease, transform 0.25s ease;
   }
 
   .modal-message {
@@ -216,6 +228,17 @@
     margin: 1rem 0 1.8rem;
     line-height: 1.5;
     white-space: pre-line;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .text-fade-out {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  
+  .text-fade-in {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .modal-btn {
@@ -273,12 +296,14 @@
     line-height: 1;
   }
   .rotate-animation {
-    animation: spinRotate 0.5s ease 1;
+    animation: smoothSpin 0.55s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
   }
-  @keyframes spinRotate {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  @keyframes smoothSpin {
+    0% { transform: rotate(0deg) scale(0.9); opacity: 0.5; }
+    50% { transform: rotate(180deg) scale(1.05); }
+    100% { transform: rotate(360deg) scale(1); opacity: 1; }
   }
+
   .spinner {
     display: inline-block;
     width: 70px;
@@ -286,16 +311,18 @@
     border: 4px solid rgba(255, 255, 255, 0.2);
     border-top: 4px solid #ffffff;
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    animation: spinPulse 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     margin-bottom: 0.5rem;
+    box-shadow: 0 0 8px rgba(255,255,255,0.2);
   }
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  @keyframes spinPulse {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.05); border-top-color: #88aaff; }
+    100% { transform: rotate(360deg) scale(1); }
   }
 
   .modal-fade-out-down {
-    animation: fadeOutDown 0.5s ease forwards !important;
+    animation: fadeOutDown 0.55s ease forwards !important;
   }
   @keyframes fadeOutDown {
     0% {
@@ -304,12 +331,11 @@
     }
     100% {
       opacity: 0;
-      transform: translateY(30px);
+      transform: translateY(35px);
       visibility: hidden;
     }
   }
 
-  /* Hiệu ứng smooth cho icon */
   .verify-icon {
     position: relative;
     min-height: 100px;
@@ -318,24 +344,35 @@
     align-items: center;
   }
   .icon-wrapper {
-    transition: opacity 0.35s ease, transform 0.35s ease;
+    transition: opacity 0.35s cubic-bezier(0.2, 0.9, 0.6, 1.1), transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.2);
   }
   .icon-wrapper.fade-out {
     opacity: 0;
-    transform: scale(0.8);
+    transform: scale(0.7) rotate(-10deg);
   }
   .icon-wrapper.fade-in {
-    animation: fadeInScale 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+    animation: floatFadeIn 0.45s cubic-bezier(0.2, 0.9, 0.4, 1.2) forwards;
   }
-  @keyframes fadeInScale {
+  @keyframes floatFadeIn {
     0% {
       opacity: 0;
-      transform: scale(0.7);
+      transform: scale(0.65) translateY(15px);
+    }
+    60% {
+      transform: scale(1.03) translateY(-2px);
     }
     100% {
       opacity: 1;
-      transform: scale(1);
+      transform: scale(1) translateY(0);
     }
+  }
+
+  #copyResultModal .modal-container {
+    transform: scale(0.96) translateY(10px);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.4, 1.1);
+  }
+  #copyResultModal.active .modal-container {
+    transform: scale(1) translateY(0);
   }
 
   @media (max-width: 680px) {
@@ -419,8 +456,10 @@
 <div id="verifyModal" class="modal-overlay">
   <div class="modal-container" id="verifyModalContainer">
     <div id="verifyIconArea" class="verify-icon"></div>
-    <div class="modal-title" id="verifyTitle">ĐANG XÁC THỰC</div>
-    <div class="modal-message" id="verifyMessage">Đang kiểm tra key ...</div>
+    <div class="modal-text-group" id="modalTextGroup">
+      <div class="modal-title" id="verifyTitle">ĐANG XÁC THỰC</div>
+      <div class="modal-message" id="verifyMessage">Đang kiểm tra key ...</div>
+    </div>
     <button id="verifyCloseBtn" class="modal-btn" style="display: none;">Đóng</button>
   </div>
 </div>
@@ -463,6 +502,7 @@
   const verifyIconArea = document.getElementById('verifyIconArea');
   const verifyTitle = document.getElementById('verifyTitle');
   const verifyMessage = document.getElementById('verifyMessage');
+  const modalTextGroup = document.getElementById('modalTextGroup');
   const verifyCloseBtn = document.getElementById('verifyCloseBtn');
 
   const musicModal = document.getElementById('musicModal');
@@ -474,20 +514,39 @@
 
   let audio = null;
   let isPlaying = false;
+  let verifyTimeoutId = null;
+
+  function smoothTextUpdate(titleText, messageText, isError = false) {
+    modalTextGroup.classList.add('text-fade-out');
+    setTimeout(() => {
+      verifyTitle.innerText = titleText;
+      verifyMessage.innerText = messageText;
+      if (isError) {
+        verifyTitle.style.color = "#ffb5a7";
+        verifyMessage.style.color = "#ffccbc";
+      } else {
+        verifyTitle.style.color = "#ffffff";
+        verifyMessage.style.color = "#eef3ff";
+      }
+      modalTextGroup.classList.remove('text-fade-out');
+      modalTextGroup.classList.add('text-fade-in');
+      setTimeout(() => {
+        modalTextGroup.classList.remove('text-fade-in');
+      }, 280);
+    }, 200);
+  }
 
   function setIconWithSmooth(htmlContent) {
-    // Tạo wrapper hiện tại
     const currentWrapper = verifyIconArea.querySelector('.icon-wrapper');
     if (currentWrapper) {
       currentWrapper.classList.add('fade-out');
       setTimeout(() => {
-        // Xóa toàn bộ và tạo wrapper mới
         verifyIconArea.innerHTML = '';
         const newWrapper = document.createElement('div');
         newWrapper.className = 'icon-wrapper fade-in';
         newWrapper.innerHTML = htmlContent;
         verifyIconArea.appendChild(newWrapper);
-      }, 350);
+      }, 320);
     } else {
       verifyIconArea.innerHTML = '';
       const newWrapper = document.createElement('div');
@@ -497,70 +556,82 @@
     }
   }
 
+  function transitionToResult(success) {
+    if (success) {
+      const successHtml = `
+        <div class="circle-icon success-circle rotate-animation">
+          <div class="success-check">✔</div>
+        </div>
+      `;
+      setIconWithSmooth(successHtml);
+      smoothTextUpdate('XÁC THỰC THÀNH CÔNG', 'Đã Xác Thực Key', false);
+      verifyCloseBtn.style.display = 'none';
+      
+      setTimeout(() => {
+        verifyModalContainer.classList.add('modal-fade-out-down');
+        const onFadeOutEnd = () => {
+          verifyModalContainer.removeEventListener('animationend', onFadeOutEnd);
+          verifyModal.classList.remove('active');
+          verifyModalContainer.classList.remove('modal-fade-out-down');
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              musicModal.classList.add('active');
+            }, 50);
+          });
+        };
+        verifyModalContainer.addEventListener('animationend', onFadeOutEnd, { once: true });
+        setTimeout(() => {
+          if (verifyModal.classList.contains('active')) {
+            verifyModal.classList.remove('active');
+            verifyModalContainer.classList.remove('modal-fade-out-down');
+            musicModal.classList.add('active');
+          }
+        }, 600);
+      }, 3000);
+    } else {
+      const errorHtml = `
+        <div class="circle-icon error-circle rotate-animation">
+          <div class="error-x">✕</div>
+        </div>
+      `;
+      setIconWithSmooth(errorHtml);
+      smoothTextUpdate('XÁC THỰC THẤT BẠI', 'Không Tìm Thấy Key', true);
+      verifyCloseBtn.style.display = 'none';
+    }
+  }
+
   function startVerification() {
     verifyModal.classList.add('active');
-    // Hiển thị spinner với wrapper
     const spinnerWrapper = document.createElement('div');
     spinnerWrapper.className = 'icon-wrapper';
     spinnerWrapper.innerHTML = '<div class="spinner"></div>';
     verifyIconArea.innerHTML = '';
     verifyIconArea.appendChild(spinnerWrapper);
     
+    modalTextGroup.classList.remove('text-fade-out', 'text-fade-in');
     verifyTitle.innerText = 'ĐANG XÁC THỰC KEY';
     verifyMessage.innerText = 'Đang kiểm tra key ...';
+    verifyTitle.style.color = "#ffffff";
+    verifyMessage.style.color = "#eef3ff";
     verifyCloseBtn.style.display = 'none';
     verifyModalContainer.classList.remove('modal-fade-out-down');
     
-    // Spinner quay 3.5 giây, sau đó chuyển sang kết quả với hiệu ứng mượt
-    setTimeout(() => {
+    if (verifyTimeoutId) clearTimeout(verifyTimeoutId);
+    
+    verifyTimeoutId = setTimeout(() => {
       if (isValidKey) {
-        // Hiển thị thành công với hiệu ứng mượt
-        const successHtml = `
-          <div class="circle-icon success-circle rotate-animation">
-            <div class="success-check">✔</div>
-          </div>
-        `;
-        setIconWithSmooth(successHtml);
-        verifyTitle.innerText = 'XÁC THỰC THÀNH CÔNG';
-        verifyMessage.innerText = 'Đã Xác Thực Key';
-        verifyCloseBtn.style.display = 'none';
-        
-        // Sau 3 giây, bắt đầu hiệu ứng fade-out và mở modal nhạc
-        setTimeout(() => {
-          verifyModalContainer.classList.add('modal-fade-out-down');
-          
-          const onFadeOutEnd = () => {
-            verifyModalContainer.removeEventListener('animationend', onFadeOutEnd);
-            verifyModal.classList.remove('active');
-            verifyModalContainer.classList.remove('modal-fade-out-down');
-            
-            requestAnimationFrame(() => {
-              setTimeout(() => {
-                musicModal.classList.add('active');
-              }, 30);
-            });
-          };
-          verifyModalContainer.addEventListener('animationend', onFadeOutEnd, { once: true });
-        }, 3000);
+        transitionToResult(true);
       } else {
-        // Hiển thị thất bại với hiệu ứng mượt
-        const errorHtml = `
-          <div class="circle-icon error-circle rotate-animation">
-            <div class="error-x">X</div>
-          </div>
-        `;
-        setIconWithSmooth(errorHtml);
-        verifyTitle.innerText = 'XÁC THỰC THẤT BẠI';
-        verifyMessage.innerText = 'Không Tìm Thấy Key';
-        verifyCloseBtn.style.display = 'none';
-        // Không có nút đóng → modal giữ nguyên
+        transitionToResult(false);
       }
+      verifyTimeoutId = null;
     }, 3500);
   }
 
   verifyModal.addEventListener('click', (e) => {
     if (e.target === verifyModal) {
-      if (verifyCloseBtn.style.display === 'inline-block') {
+      const hasSpinner = verifyIconArea.querySelector('.spinner');
+      if (!hasSpinner && verifyTimeoutId === null) {
         verifyModal.classList.remove('active');
       }
     }
@@ -595,6 +666,12 @@
     playMusic();
     musicModal.classList.remove('active');
   });
+  
+  musicModal.addEventListener('click', (e) => {
+    if (e.target === musicModal) {
+      musicModal.classList.remove('active');
+    }
+  });
 
   function showCopyModal(success, message) {
     copyResultModal.classList.remove('active');
@@ -609,6 +686,11 @@
       copyResultMsg.innerText = message;
     }
     copyResultModal.classList.add('active');
+    setTimeout(() => {
+      if (copyResultModal.classList.contains('active')) {
+        copyResultModal.classList.remove('active');
+      }
+    }, 2200);
   }
 
   function closeCopyModal() {
@@ -620,25 +702,32 @@
     if (e.target === copyResultModal) closeCopyModal();
   });
 
-  async function copyKeyFromElement() {
+  async function copyKeyFromElement(event) {
     if (!isValidKey) {
       showCopyModal(false, 'Không tìm thấy key hợp lệ trong URL.');
       return;
     }
     const realKey = keyParam.trim();
+    keyDisplay.style.transform = 'scale(0.97)';
+    keyDisplay.style.background = 'rgba(255, 255, 255, 0.2)';
+    setTimeout(() => {
+      keyDisplay.style.transform = '';
+      keyDisplay.style.background = '';
+    }, 150);
+    
     try {
       await navigator.clipboard.writeText(realKey);
       showCopyModal(true, `Đã sao chép key thành công:\n${realKey}`);
-      keyDisplay.style.transform = 'scale(0.99)';
-      setTimeout(() => {
-        keyDisplay.style.transform = '';
-      }, 200);
     } catch (err) {
       showCopyModal(false, 'Lỗi sao chép: Trình duyệt không cho phép hoặc có lỗi kỹ thuật.');
     }
   }
 
   if (keyDisplay) {
+    keyDisplay.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      keyDisplay.style.outline = 'none';
+    });
     keyDisplay.addEventListener('click', copyKeyFromElement);
   }
 
