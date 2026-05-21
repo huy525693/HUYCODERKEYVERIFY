@@ -397,7 +397,7 @@
         <button class="btn" id="copyBtn">COPY KEY</button>
       </div>
 
-      <div class="small">HUYCODER CHÍNH HÃNG © 2026 — HỆ THỐNG BẢO MẬT</div>
+      <div class="small">HUYCODER X TOOL CHÍNH HÃNG © 2026 — HỆ THỐNG BẢO MẬT</div>
     </div>
   </div>
 </div>
@@ -488,9 +488,12 @@
             verifyModalContainer.removeEventListener('animationend', onFadeOutEnd);
             verifyModal.classList.remove('active');
             verifyModalContainer.classList.remove('modal-fade-out-down');
-            setTimeout(() => {
-              showMusicModal();
-            }, 20);
+            
+            requestAnimationFrame(() => {
+              setTimeout(() => {
+                musicModal.classList.add('active');
+              }, 30);
+            });
           };
           verifyModalContainer.addEventListener('animationend', onFadeOutEnd, { once: true });
         }, 3000);
@@ -505,10 +508,6 @@
         verifyCloseBtn.style.display = 'none';
       }
     }, 300);
-  }
-
-  function showMusicModal() {
-    musicModal.classList.add('active');
   }
 
   verifyModal.addEventListener('click', (e) => {
