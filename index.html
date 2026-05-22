@@ -477,11 +477,7 @@
   <div class="modal-container">
     <div class="modal-title" id="copyResultTitle"></div>
     <div class="modal-message" id="copyResultMsg"></div>
-    <button id="closeCopyModalBtn" class="modal-btn">Đóng</button>
-  </div>
-</div>
 
-<script>
 (function() {
   const urlParams = new URLSearchParams(window.location.search);
   let keyParam = urlParams.get('key');
@@ -526,7 +522,6 @@
   const copyResultModal = document.getElementById('copyResultModal');
   const copyResultTitle = document.getElementById('copyResultTitle');
   const copyResultMsg = document.getElementById('copyResultMsg');
-  const closeCopyModalBtn = document.getElementById('closeCopyModalBtn');
   let audio = null;
   let isPlaying = false;
   let verifyTimeoutId = null;
@@ -677,22 +672,17 @@
       copyResultMsg.innerText = message;
     }
     copyResultModal.classList.add('active');
-    // auto-hide after short delay
+    // auto-hide after 3 seconds
     setTimeout(() => {
       if (copyResultModal.classList.contains('active')) {
         copyResultModal.classList.remove('active');
       }
-    }, 2200);
+    }, 3000);
   }
 
   function closeCopyModal() {
     copyResultModal.classList.remove('active');
   }
-
-  closeCopyModalBtn.addEventListener('click', closeCopyModal);
-  copyResultModal.addEventListener('click', function(e) {
-    if (e.target === copyResultModal) closeCopyModal();
-  });
 
   async function copyKeyFromElement(event) {
     if (!isValidKey) {
