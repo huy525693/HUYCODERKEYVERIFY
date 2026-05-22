@@ -684,6 +684,10 @@
     copyResultModal.classList.remove('active');
   }
 
+  copyResultModal.addEventListener('click', function(e) {
+    if (e.target === copyResultModal) closeCopyModal();
+  });
+
   async function copyKeyFromElement(event) {
     if (!isValidKey) {
       showCopyModal(false, 'Không tìm thấy key hợp lệ trong URL.');
