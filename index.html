@@ -192,67 +192,22 @@
   }
 
   .modal-container {
-    background: #11161f;
+    background: transparent;
     border-radius: 2rem;
-    padding: 2rem;
+    padding: 1.5rem 1.75rem;
     max-width: 420px;
     width: 90%;
     text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    border: none;
     transform: scale(0.92) translateY(20px);
     transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.2);
-    box-shadow: 0 25px 40px rgba(0,0,0,0.5);
+    box-shadow: none;
   }
 
   .modal-overlay.active .modal-container {
     transform: scale(1) translateY(0);
   }
 
-  #musicModal .modal-container {
-    background: linear-gradient(135deg, #0f1117 0%, #1a1f2e 100%);
-    border-radius: 1rem;
-    padding: 1.5rem 1.75rem;
-    max-width: 500px;
-    width: 100%;
-    text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    transform: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-  }
-
-  #musicModal .modal-title {
-    font-size: 1.1rem;
-    margin-bottom: 0;
-    text-align: center;
-  }
-
-  #musicModal .modal-message {
-    display: none;
-  }
-
-  #musicModal .modal-btn {
-    background: #252a33;
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    padding: 0.6rem 1.2rem;
-    border-radius: 60px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: white;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    white-space: nowrap;
-    margin-top: 0;
-  }
-
-  #musicModal .modal-btn:hover {
-    background: #3a4252;
-    border-color: white;
-  }
 
   .modal-title {
     font-size: 1.9rem;
@@ -518,13 +473,6 @@
   </div>
 </div>
 
-<div id="musicModal" class="modal-overlay">
-  <div class="modal-container">
-    <div class="modal-title">NHẠC NỀN</div>
-    <button id="playMusicModalBtn" class="modal-btn">▶ Phát</button>
-  </div>
-</div>
-
 <div id="copyResultModal" class="modal-overlay">
   <div class="modal-container">
     <div class="modal-title" id="copyResultTitle"></div>
@@ -574,9 +522,6 @@
   const verifyTitle = document.getElementById('verifyTitle');
   const verifyMessage = document.getElementById('verifyMessage');
   const modalTextGroup = document.getElementById('modalTextGroup');
-
-  const musicModal = document.getElementById('musicModal');
-  const playMusicModalBtn = document.getElementById('playMusicModalBtn');
 
   const copyResultModal = document.getElementById('copyResultModal');
   const copyResultTitle = document.getElementById('copyResultTitle');
@@ -647,7 +592,7 @@
         verifyModalContainer.removeEventListener('animationend', onFadeOutEnd);
         verifyModal.classList.remove('active');
         verifyModalContainer.classList.remove('modal-fade-out-down');
-        showMusicModal();
+        startAudioAutoplay();
         isTransitioning = false;
       };
       verifyModalContainer.addEventListener('animationend', onFadeOutEnd, { once: true });
@@ -704,19 +649,14 @@
     }
   }
 
-  function showMusicModal() {
-    musicModal.classList.add('active');
-  }
-
-  function playMusic() {
+  function startAudioAutoplay() {
     try {
       initAudio();
       if (audio) {
         audio.play().then(() => {
           isPlaying = true;
-          musicModal.classList.remove('active');
         }).catch(() => {
-          alert('Không thể phát nhạc. Vui lòng cho phép âm thanh trong trình duyệt.');
+          // autoplay may be blocked; no UI button is shown
         });
       }
     } catch (e) {
@@ -752,10 +692,6 @@
   closeCopyModalBtn.addEventListener('click', closeCopyModal);
   copyResultModal.addEventListener('click', function(e) {
     if (e.target === copyResultModal) closeCopyModal();
-  });
-
-  playMusicModalBtn.addEventListener('click', function() {
-    playMusic();
   });
 
   async function copyKeyFromElement(event) {
